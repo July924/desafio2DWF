@@ -50,16 +50,38 @@ public class AlumnoServiceImpl implements AlumnoService {
 
     @Override
     public List<AlumnoResponse> obtenerTodosLosAlumnos() {
-        return List.of();
+        List<Alumno> alumnos = alumnoRepository.findAll();
+        return alumnos.stream()
+                .map(AlumnoMapper::toResponse)
+                .toList();
     }
 
     @Override
     public AlumnoResponse actualizarAlumno(int id, AlumnoRequest request) {
-        return null;
+        Optional<Alumno> alumnoOpt = alumnoRepository.findById(id);
+        if (!alumnoOpt.isPresent()) {
+            throw new RuntimeException("Alumno no encontrado");
+        }
+
+        Optional<Materia> materiaOpt = materiaRepository.findById(request.getIdMateria());
+        if (!materiaOpt.isPresent()) {
+            throw new RuntimeException("Materia no encontrada");
+        }
+
+        Alumno alumno = alumnoOpt.get();
+        alumno.setNombre(request.getNombre());
+        alumno.setApellido(request.getApellido());
+        alumno.setMateria(materiaOpt.get());
+
+        Alumno actualizado = alumnoRepository.save(alumno);
+        return AlumnoMapper.toResponse(actualizado);
     }
 
     @Override
     public void eliminarAlumno(int id) {
-
+        if (!alumnoRepository.existsById(id)) {
+            throw new RuntimeException("Alumno no encontrado");
+        }
+        alumnoRepository.deleteById(id);
     }
 }

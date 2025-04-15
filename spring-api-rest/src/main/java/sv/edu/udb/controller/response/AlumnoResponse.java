@@ -6,7 +6,7 @@ public class AlumnoResponse {
     private String apellido;
     private String nombreMateria;
 
-    // Constructor vacío (opcional, útil para frameworks)
+   
     public AlumnoResponse() {}
 
     // Getters y setters completos
